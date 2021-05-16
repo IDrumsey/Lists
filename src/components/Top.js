@@ -1,9 +1,9 @@
 import Text from './Text';
 
-function Top() {
+function Top(props) {
     return (
         <div className="top">
-            <Text text="Lists" styles={{fontSize: "50px", color: "#CFCFCF"}} xCentered/>
+            <Text text={props.title} styles={{fontSize: "50px", color: "#fff"}} xCentered/>
         </div>
     );
 }

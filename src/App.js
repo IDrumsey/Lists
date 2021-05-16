@@ -1,5 +1,6 @@
 import Welcome from './components/Welcome';
 import Home from './components/Home';
+import ListContainer from './components/ListContainer';
 
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 
@@ -8,10 +9,13 @@ function App(props) {
     <Router>
         <Switch>
           {/* Welcome Page */}
-          <Route path="/" component={Welcome}/>
+          <Route exact path="/" component={Welcome}/>
 
           {/* Home Page */}
-          <Route path="/Home" component={Home}/>
+          <Route exact path="/Home" component={Home}/>
+
+          {/* Single List Page */}
+          <Route exact path="/List" component={ListContainer}/>
         </Switch>
     </Router>
   );

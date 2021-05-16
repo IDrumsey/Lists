@@ -8,7 +8,7 @@ class Welcome extends React.Component {
     render() {
         return (
             <div id="container">
-                <Top/>
+                <Top title="Lists"/>
                 <Middle welcome/>
                 <Bottom welcome/>
             </div>

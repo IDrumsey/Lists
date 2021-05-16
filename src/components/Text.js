@@ -2,6 +2,12 @@ import React from 'react';
 
 import {classArrayToString as ClassCombine} from '../common';
 
+/**
+ * Styling options - props
+ * ==============================
+ * xCentered:       centers the h1 component horizontally with margin auto
+ * textCentered:    centers the text within the h1 element
+ */
 class Text extends React.Component {
     classes = ['text'];
 
@@ -9,6 +15,10 @@ class Text extends React.Component {
         //check for horizontal centering
         if(this.props.xCentered){
             this.classes.push('text-centered-x');
+        }
+
+        if(this.props.textCentered){
+            this.classes.push('text-centered');
         }
 
         let final_classes = ClassCombine(this.classes);
