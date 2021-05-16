@@ -1,9 +1,20 @@
-import React from 'react';
+import Welcome from './components/Welcome';
+import Home from './components/Home';
 
-class App extends React.Component {
-  render() {
-    return <h1>Hello World!</h1>
-  }
+import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
+
+function App(props) {
+  return (
+    <Router>
+        <Switch>
+          {/* Welcome Page */}
+          <Route path="/" component={Welcome}/>
+
+          {/* Home Page */}
+          <Route path="/Home" component={Home}/>
+        </Switch>
+    </Router>
+  );
 }
 
 export default App;
