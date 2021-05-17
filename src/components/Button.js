@@ -13,7 +13,13 @@ class Button extends React.Component {
         width: this.props.size,
         height: this.props.size,
         boxShadow: "0 0 5px " + this.props.glow,
-        backgroundColor: this.props.bgColor
+        backgroundColor: this.props.bgColor,
+        display: this.props.centered ? "block" : "auto",
+        margin: this.props.centered ? "auto" : "none",
+        marginLeft: this.props.ml ? this.props.ml : "none",
+        marginRight: this.props.mr ? this.props.mr : "none",
+        marginTop: this.props.mt ? this.props.mt : "none",
+        marginBottom: this.props.mb ? this.props.mb : "none",
     }
 
     icon_styles = {
@@ -24,29 +30,11 @@ class Button extends React.Component {
     // Events
 
     render() {
-        //check for centering
-        if(this.props.centered){
-            this.btn_styles.display = "block";
-            this.btn_styles.margin = "auto";
-        }
-
-        //check for margin
-        if(this.props.ml){
-            this.btn_styles.marginLeft = this.props.ml;
-        }
-        if(this.props.mr){
-            this.btn_styles.marginRight = this.props.mr;
-        }
-        if(this.props.mt){
-            this.btn_styles.marginTop = this.props.mt;
-        }
-        if(this.props.mb){
-            this.btn_styles.marginBottom = this.props.mb;
-        }
 
         let classname = "fa fa-" + this.props.icon + " btn-icon";
+
         return (
-            <div className="btn" style={this.btn_styles} onClick={() => this.props.clickHandler(this.props)}>
+            <div className="btn" style={this.btn_styles} onClick={this.props.clickHandler ? () => this.props.clickHandler() : undefined}>
                 <i className={classname} style={this.icon_styles}></i>
             </div>
         );

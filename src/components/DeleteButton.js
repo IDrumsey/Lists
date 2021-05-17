@@ -1,26 +1,8 @@
+import React from 'react';
 import Button from './Button';
 
 class DeleteButton extends Button {
     render() {
-        //check for centering
-        if(this.props.centered){
-            this.btn_styles.display = "block";
-            this.btn_styles.margin = "auto";
-        }
-
-        //check for margin
-        if(this.props.ml){
-            this.btn_styles.marginLeft = this.props.ml;
-        }
-        if(this.props.mr){
-            this.btn_styles.marginRight = this.props.mr;
-        }
-        if(this.props.mt){
-            this.btn_styles.marginTop = this.props.mt;
-        }
-        if(this.props.mb){
-            this.btn_styles.marginBottom = this.props.mb;
-        }
 
         let classname = "fa fa-" + this.props.icon + " btn-icon";
         return (
@@ -32,3 +14,15 @@ class DeleteButton extends Button {
 }
 
 export default DeleteButton;
+
+class Component extends React.Component {
+    styles = {
+        width: "50px",
+        margin: this.props.margin ? this.props.margin : "none"
+    }
+
+    render() {
+
+        return <div style={this.styles}></div>
+    }
+}

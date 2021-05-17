@@ -4,7 +4,26 @@ import Button from './Button';
 import List from './List';
 
 class Middle extends React.Component {
+    constructor(props){
+        super(props)
+        this.state = {
+            showingNewItemTemplate: false
+        }
+    }
+
+    componentDidUpdate(){
+        if(this.state.showingNewItemTemplate !== this.props.showingNewItemTemplate){
+            console.log("middle update show")
+            this.setState(
+                {
+                    showingNewItemTemplate: this.props.showingNewItemTemplate
+                }
+            )
+        }
+    }
+
     content = <div className="middle"></div>;
+    
 
     render() {
         // Welcome page
@@ -17,15 +36,20 @@ class Middle extends React.Component {
         }
         
         //Single List Page
+        
         if(this.props.list){
+            console.log("rendering list page middle : ", this.state.showingNewItemTemplate)
             this.content = (
                 <div className="middle">
-                    <Button mb="50px" size="50px" icon="plus" glow="#34eb77" centered/>
+                    <Button mb="50px" size="50px" icon="plus" glow="#34eb77" centered clickHandler={this.props.showNewItemTemplateHandler}/>
                     <List
                         items={this.props.items}
                         w="80%"
                         centered
                         deleteItemProps={this.props.deleteItemProps}
+                        showingNewItemTemplate = {this.state.showingNewItemTemplate}
+                        addItemProps = {this.props.addItemProps}
+                        removeNewItemTemplateHandler = {this.props.removeNewItemTemplateHandler}
                     />
                 </div>
             );
