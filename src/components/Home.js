@@ -4,7 +4,7 @@ import Top from './Top';
 import Middle from './Middle';
 import Bottom from './Bottom';
 
-class ListContainer extends React.Component {
+class Home extends React.Component {
     constructor(props){
         super(props);
         this.state = {
@@ -16,6 +16,49 @@ class ListContainer extends React.Component {
             ],
             addNewItemTemplate: false
         }
+    }
+
+    // Load data on mount
+    componentDidMount() {
+        let csrfToken = document.getElementsByName('csrf-token')[0].getAttribute("content");
+        console.log("csrf token : ", csrfToken);
+        const test_user_creds = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
+            },
+            body: JSON.stringify({
+                email: "testEmail2@email",
+                password: "testP@ssword2"
+            })
+        }
+
+        //get the user token
+        console.log("Fetching user data")
+        fetch("http://localhost:8000/api/login", test_user_creds)
+        .then(res => res.json())
+        .then(
+            result => {
+                console.log(result)
+                //set the session token to the user's token
+                sessionStorage.setItem("API_Token", result.token);
+            }
+        )
+
+        console.log("Fetching home data")
+
+        fetch("http://localhost:8000/api/lists")
+        .then(res => res.json())
+        .then(
+            result => {
+                this.setState(
+                    {
+                        items: result
+                    }
+                )
+            }
+        )
     }
 
     find_available_id = () => {
@@ -110,4 +153,4 @@ class ListContainer extends React.Component {
     }
 }
 
-export default ListContainer;
+export default Home;

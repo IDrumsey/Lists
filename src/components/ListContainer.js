@@ -9,26 +9,26 @@ class ListContainer extends React.Component {
         super(props);
         this.state = {
             name: "Grocery List",
-            items: [
-                {
-                    id: 1,
-                    name: "Spinach"
-                },
-                {
-                    id: 2,
-                    name: "Salad Dressing"
-                },
-                {
-                    id: 3,
-                    name: "Tomatoes"
-                },
-                {
-                    id: 4,
-                    name: "Milk"
-                }
-            ],
+            items: [],
             addNewItemTemplate: false
         }
+    }
+
+    // Load data on mount
+    componentDidMount() {
+        console.log("Fetching list data")
+
+        fetch("http://localhost:8000/api/lists/" + this.props.match.params.listId)
+        .then(res => res.json())
+        .then(
+            result => {
+                this.setState(
+                    {
+                        items: result.items
+                    }
+                )
+            }
+        )
     }
 
     find_available_id = () => {
@@ -99,6 +99,33 @@ class ListContainer extends React.Component {
                         ...this.state.items
                     ],
                     addNewItemTemplate: false
+                }
+            )
+
+            console.log("updating db")
+            console.log(sessionStorage.getItem("API_Token"))
+            //add the item to db
+            const push_settings = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: newItemName,
+                    user_id: 1,
+                    list_id: this.props.match.params.listId
+                })
+            }
+
+            const req_config = {
+                headers: { Authorization: 'Bearer ' + sessionStorage.getItem("API_Token")}
+            }
+
+            fetch("http://localhost:8000/api/items", push_settings, req_config)
+            .then(
+                res => res.json()
+            )
+            .then(
+                result => {
+                    console.log(result)
                 }
             )
         }
