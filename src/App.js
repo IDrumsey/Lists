@@ -15,7 +15,7 @@ function App(props) {
           <Route exact path="/Home" component={Home}/>
 
           {/* Single List Page */}
-          <Route exact path="/List" component={ListContainer}/>
+          <Route path="/List" component={ListContainer}/>
         </Switch>
     </Router>
   );

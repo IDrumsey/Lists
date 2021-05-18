@@ -27,17 +27,28 @@ class Button extends React.Component {
         color: this.props.color
     }
 
-    // Events
-
     render() {
-
         let classname = "fa fa-" + this.props.icon + " btn-icon";
+        
+        let content;
+        if(this.props.to){
+            content = (
+                <a href={this.props.to}>
+                    <div className="btn" style={this.btn_styles} onClick={this.props.clickHandler ? () => this.props.clickHandler() : undefined}>
+                        <i className={classname} style={this.icon_styles}></i>
+                    </div>
+                </a>
+            );
+        }
+        else{
+            content = (
+                <div className="btn" style={this.btn_styles} onClick={this.props.clickHandler ? () => this.props.clickHandler() : undefined}>
+                    <i className={classname} style={this.icon_styles}></i>
+                </div>
+            )
+        }
 
-        return (
-            <div className="btn" style={this.btn_styles} onClick={this.props.clickHandler ? () => this.props.clickHandler() : undefined}>
-                <i className={classname} style={this.icon_styles}></i>
-            </div>
-        );
+        return content;
     }
 }
 

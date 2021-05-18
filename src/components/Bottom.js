@@ -24,6 +24,39 @@ function Bottom(props) {
             }
         ];
     }
+
+    if(props.list){
+        btns = [
+            {
+                size: "75px",
+                color: "#000",
+                icon: "sign-out",
+                bgColor: "#fff",
+                glow: "#fff"
+            },
+    
+            {
+                size: "75px",
+                color: "#000",
+                icon: "home",
+                bgColor: "#fff",
+                glow: "#fff",
+                to: "/Home"
+            }
+        ]
+    }
+
+    if(props.home){
+        btns = [
+            {
+                size: "75px",
+                color: "#000",
+                icon: "sign-out",
+                bgColor: "#fff",
+                glow: "#fff"
+            }
+        ]
+    }
     
     return (
         <div className="bottom">

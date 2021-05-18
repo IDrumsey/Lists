@@ -14,15 +14,3 @@ class DeleteButton extends Button {
 }
 
 export default DeleteButton;
-
-class Component extends React.Component {
-    styles = {
-        width: "50px",
-        margin: this.props.margin ? this.props.margin : "none"
-    }
-
-    render() {
-
-        return <div style={this.styles}></div>
-    }
-}

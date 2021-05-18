@@ -68,7 +68,6 @@ class ListContainer extends React.Component {
 
     // Show the new item template
     show_new_item_template = () => {
-        console.log("showing new item template")
         this.setState(
             {
                 addNewItemTemplate: true
@@ -88,21 +87,18 @@ class ListContainer extends React.Component {
     add_item = () => {
         let newItemName = document.getElementById("new-item-name").value;
 
-        if(newItemName.length != 0){
+        if(newItemName.length !== 0){
             // Add the item
             this.setState(
                 {
                     items: [
-                        ...this.state.items,
                         {
                             id: this.find_available_id(),
                             name: newItemName
-                        }
+                        },
+                        ...this.state.items
                     ],
                     addNewItemTemplate: false
-                },
-                ()=>{
-                    console.log(this.state)
                 }
             )
         }
@@ -121,6 +117,7 @@ class ListContainer extends React.Component {
                     showNewItemTemplateHandler = {this.show_new_item_template}
                     removeNewItemTemplateHandler = {this.remove_new_item_template}
                 />
+                <Bottom list/>
             </div>
         )
     }
