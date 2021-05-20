@@ -64,10 +64,39 @@ function Bottom(props) {
             {
                 size: "75px",
                 color: "#000",
+                icon: "user-plus",
+                bgColor: "#fff",
+                glow: "#fff",
+                to: '/Register'
+            },
+            {
+                size: "75px",
+                color: "#000",
                 icon: "sign-in",
                 bgColor: "#fff",
                 glow: "#fff",
                 clickEvent: props.signInHandler
+            }
+        ]
+    }
+
+    if(props.register){
+        btns = [
+            {
+                size: "75px",
+                color: "#000",
+                icon: "sign-in",
+                bgColor: "#fff",
+                glow: "#fff",
+                to: '/Login'
+            },
+            {
+                size: "75px",
+                color: "#000",
+                icon: "user-plus",
+                bgColor: "#fff",
+                glow: "#fff",
+                clickEvent: props.registerHandler
             }
         ]
     }

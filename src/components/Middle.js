@@ -75,8 +75,20 @@ class Middle extends React.Component {
         if(this.props.login){
             this.content = (
                 <div className="middle">
-                    <input className="login-input" type="text" name="email" placeholder="Email"/>
-                    <input className="login-input" type="text" name="password" placeholder="Password"/>
+                    <input className="login-input" id="email-input" type="text" name="email" placeholder="Email"/>
+                    <input className="login-input" id="password-input" type="text" name="password" placeholder="Password"/>
+                </div>
+            )
+        }
+
+        if(this.props.register){
+            this.content = (
+                <div className="middle">
+                    <input className="login-input" id="email-input" type="email" name="email" placeholder="Email"/>
+                    <input className="login-input" id="first-name-input" type="text" name="first-name" placeholder="First Name"/>
+                    <input className="login-input" id="last-name-input" type="text" name="last-name" placeholder="Last Name"/>
+                    <input className="login-input" id="password-input" type="password" name="password" placeholder="Password"/>
+                    <input className="login-input" id="password-confirmation-input" type="password" name="password-confirmation" placeholder="Confirm Password"/>
                 </div>
             )
         }
