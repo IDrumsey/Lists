@@ -53,7 +53,21 @@ function Bottom(props) {
                 color: "#000",
                 icon: "sign-out",
                 bgColor: "#fff",
-                glow: "#fff"
+                glow: "#fff",
+                to: "/Login"
+            }
+        ]
+    }
+
+    if(props.login){
+        btns = [
+            {
+                size: "75px",
+                color: "#000",
+                icon: "sign-in",
+                bgColor: "#fff",
+                glow: "#fff",
+                clickEvent: props.signInHandler
             }
         ]
     }

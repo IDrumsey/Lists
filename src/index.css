@@ -89,6 +89,21 @@ a {
   outline: none;
 }
 
+.login-input {
+  display: block;
+  width: 80%;
+  margin: 20px auto;
+  padding: 10px;
+  font-size: 25px;
+  border-radius: 5px;
+  border: none;
+  font-family: "Rockwell";
+}
+
+input:focus {
+  outline: none;
+}
+
 /* Mobile */
 
 /* ======================================================================================================== */

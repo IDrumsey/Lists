@@ -72,6 +72,15 @@ class Middle extends React.Component {
             );
         }
 
+        if(this.props.login){
+            this.content = (
+                <div className="middle">
+                    <input className="login-input" type="text" name="email" placeholder="Email"/>
+                    <input className="login-input" type="text" name="password" placeholder="Password"/>
+                </div>
+            )
+        }
+
         return this.content;
     }
 }
