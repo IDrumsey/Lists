@@ -8,57 +8,31 @@ class Home extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            items: [
-                {
-                    id: 1,
-                    name: "Grocery List"
-                }
-            ],
+            items: [],
             addNewItemTemplate: false
         }
     }
 
     // Load data on mount
     componentDidMount() {
-        let csrfToken = document.getElementsByName('csrf-token')[0].getAttribute("content");
-        console.log("csrf token : ", csrfToken);
-        const test_user_creds = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken
-            },
-            body: JSON.stringify({
-                email: "testEmail2@email",
-                password: "testP@ssword2"
-            })
-        }
-
-        //get the user token
-        console.log("Fetching user data")
-        fetch("http://localhost:8000/api/login", test_user_creds)
+        //get all lists
+        fetch('http://localhost:3000/api/lists', {
+            method: 'GET'
+        })
         .then(res => res.json())
-        .then(
-            result => {
-                console.log(result)
-                //set the session token to the user's token
-                sessionStorage.setItem("API_Token", result.token);
-            }
-        )
-
-        console.log("Fetching home data")
-
-        fetch("http://localhost:8000/api/lists")
-        .then(res => res.json())
-        .then(
-            result => {
-                this.setState(
-                    {
-                        items: result
-                    }
-                )
-            }
-        )
+        .then(res => {
+            //update state to have all lists
+            this.setState(
+                {
+                    items: res.List.map(list => {
+                        return {
+                            id: list._id,
+                            name: list.name
+                        }
+                    })
+                }
+            )
+        })
     }
 
     find_available_id = () => {
@@ -87,13 +61,42 @@ class Home extends React.Component {
 
     // Remove an item
     delete_list_item = id => {
-        this.setState({
-            items: [
-                ...this.state.items.filter(item => {
-                    return item.id !== id;
-                })
-            ]
-        });
+        // remove all items -> get list items
+        fetch('http://localhost:3000/api/lists/' + id)
+            .then(res => res.json())
+            .then(
+                res => {
+                    if(res.List !== undefined){
+                        //remove all items
+                        res.List.item_ids.forEach(item_id => {
+                            fetch('http://localhost:3000/api/items/' + item_id,
+                            {
+                                method: 'DELETE',
+                            })
+                        });
+
+                        //remove the list
+                        fetch('http://localhost:3000/api/lists/' + id,
+                        {
+                            method: 'DELETE'
+                        }).then(res => res.json())
+                        .then(
+                            res => {
+                                if(res.status === "success"){
+                                    //update state
+                                    this.setState({
+                                        items: [
+                                            ...this.state.items.filter(item => {
+                                                return item.id !== id;
+                                            })
+                                        ]
+                                    });
+                                }
+                            }
+                        )
+                    }
+                }
+            )
     }
 
     // Show the new item template
@@ -118,17 +121,33 @@ class Home extends React.Component {
         let newItemName = document.getElementById("new-item-name").value;
 
         if(newItemName.length !== 0){
-            // Add the item
-            this.setState(
-                {
-                    items: [
+            // add list to db
+            fetch('http://localhost:3000/api/lists',
+            {
+                method: 'POST',
+                headers:{
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: newItemName
+                })
+            }).then(res => res.json())
+            .then(
+                res => {
+                    // Add the item
+                    if(res.status === "success")
+                    this.setState(
                         {
-                            id: this.find_available_id(),
-                            name: newItemName
-                        },
-                        ...this.state.items
-                    ],
-                    addNewItemTemplate: false
+                            items: [
+                                {
+                                    id: res.list._id,
+                                    name: newItemName
+                                },
+                                ...this.state.items
+                            ],
+                            addNewItemTemplate: false
+                        }
+                    )
                 }
             )
         }

@@ -16,17 +16,43 @@ class ListContainer extends React.Component {
 
     // Load data on mount
     componentDidMount() {
-        console.log("Fetching list data")
+        let list_id = this.props.match.params.listId;
 
-        fetch("http://localhost:8000/api/lists/" + this.props.match.params.listId)
+        fetch(
+            'http://localhost:3000/api/lists/' + list_id, 
+            {
+                method: 'GET'
+            }
+        )
         .then(res => res.json())
         .then(
-            result => {
+            res => {
+                //set list name
                 this.setState(
                     {
-                        items: result.items
+                        name: res.List.name
                     }
                 )
+                //for each item id -> fetch the item
+                res.List.item_ids.forEach(item_id => {
+                    fetch('http://localhost:3000/api/items/' + item_id)
+                    .then(res => res.json())
+                    .then(
+                        res => {
+                            // update the state
+                            this.setState(
+                                {
+                                    items: this.state.items.concat(
+                                        {
+                                            id: res.Item._id,
+                                            name: res.Item.name
+                                        }
+                                    )
+                                }
+                            )
+                        }
+                    )
+                })
             }
         )
     }
@@ -57,13 +83,38 @@ class ListContainer extends React.Component {
 
     // Remove an item
     delete_list_item = id => {
-        this.setState({
-            items: [
-                ...this.state.items.filter(item => {
-                    return item.id !== id;
-                })
-            ]
-        });
+        // delete from lists db
+        fetch('http://localhost:3000/api/lists/' + this.props.match.params.listId,
+        {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                remove_item: id
+            })
+        }).then(res => res.json())
+        .then(
+            res => {
+                // check if successful -> remove from items db
+                fetch('http://localhost:3000/api/items/' + id,
+                {
+                    method: 'DELETE'
+                }).then(res => res.json())
+                .then(
+                    res => {
+                        //check if successful -> update state
+                        this.setState({
+                            items: [
+                                ...this.state.items.filter(item => {
+                                    return item.id !== id;
+                                })
+                            ]
+                        });
+                    }
+                )
+            }
+        )
     }
 
     // Show the new item template
@@ -87,45 +138,58 @@ class ListContainer extends React.Component {
     add_item = () => {
         let newItemName = document.getElementById("new-item-name").value;
 
+        let data = {
+            name: newItemName
+        }
+
         if(newItemName.length !== 0){
-            // Add the item
-            this.setState(
-                {
-                    items: [
+            //add to items db
+            fetch('http://localhost:3000/api/items/',
+            {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(
+                res => {
+                    //check for success -> add to lists db
+                    if(res.status === "New item created successfully!"){
+                        fetch('http://localhost:3000/api/lists/' + this.props.match.params.listId,
                         {
-                            id: this.find_available_id(),
-                            name: newItemName
-                        },
-                        ...this.state.items
-                    ],
-                    addNewItemTemplate: false
-                }
-            )
-
-            console.log("updating db")
-            console.log(sessionStorage.getItem("API_Token"))
-            //add the item to db
-            const push_settings = {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name: newItemName,
-                    user_id: 1,
-                    list_id: this.props.match.params.listId
-                })
-            }
-
-            const req_config = {
-                headers: { Authorization: 'Bearer ' + sessionStorage.getItem("API_Token")}
-            }
-
-            fetch("http://localhost:8000/api/items", push_settings, req_config)
-            .then(
-                res => res.json()
-            )
-            .then(
-                result => {
-                    console.log(result)
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                new_item: res.item._id
+                            })
+                        })
+                        .then(res => res.json())
+                        .then(
+                            res => {
+                                //check if successful -> update state
+                                if(res.status === 'list updated'){
+                                    //add to state
+                                    this.setState(
+                                        {
+                                            items: [
+                                                //new item
+                                                {
+                                                    id: this.find_available_id(),
+                                                    name: newItemName
+                                                },
+                                                ...this.state.items
+                                            ],
+                                            addNewItemTemplate: false
+                                        }
+                                    )
+                                }
+                            }
+                        )
+                    }
                 }
             )
         }
