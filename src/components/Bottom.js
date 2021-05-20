@@ -12,7 +12,8 @@ function Bottom(props) {
                 color: "#000",
                 icon: "user",
                 bgColor: "#fff",
-                glow: "#fff"
+                glow: "#fff",
+                to: "/Register"
             },
     
             {
@@ -20,7 +21,8 @@ function Bottom(props) {
                 color: "#000",
                 icon: "sign-in",
                 bgColor: "#fff",
-                glow: "#fff"
+                glow: "#fff",
+                to: "Login"
             }
         ];
     }

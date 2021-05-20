@@ -12,3 +12,5 @@ export function classArrayToString(arr){
 
     return final;
 }
+
+export let PORT = 8000;

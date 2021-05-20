@@ -4,6 +4,8 @@ import Top from './Top';
 import Middle from './Middle';
 import Bottom from './Bottom';
 
+import { PORT } from '../common';
+
 class Home extends React.Component {
     constructor(props){
         super(props);
@@ -16,7 +18,7 @@ class Home extends React.Component {
     // Load data on mount
     componentDidMount() {
         //get all lists
-        fetch('http://localhost:3000/api/lists', {
+        fetch('http://localhost:' + PORT + '/api/lists', {
             method: 'GET'
         })
         .then(res => res.json())
@@ -62,21 +64,21 @@ class Home extends React.Component {
     // Remove an item
     delete_list_item = id => {
         // remove all items -> get list items
-        fetch('http://localhost:3000/api/lists/' + id)
+        fetch('http://localhost:' + PORT + '/api/lists/' + id)
             .then(res => res.json())
             .then(
                 res => {
                     if(res.List !== undefined){
                         //remove all items
                         res.List.item_ids.forEach(item_id => {
-                            fetch('http://localhost:3000/api/items/' + item_id,
+                            fetch('http://localhost:' + PORT + '/api/items/' + item_id,
                             {
                                 method: 'DELETE',
                             })
                         });
 
                         //remove the list
-                        fetch('http://localhost:3000/api/lists/' + id,
+                        fetch('http://localhost:' + PORT + '/api/lists/' + id,
                         {
                             method: 'DELETE'
                         }).then(res => res.json())
@@ -122,7 +124,7 @@ class Home extends React.Component {
 
         if(newItemName.length !== 0){
             // add list to db
-            fetch('http://localhost:3000/api/lists',
+            fetch('http://localhost:' + PORT + '/api/lists',
             {
                 method: 'POST',
                 headers:{

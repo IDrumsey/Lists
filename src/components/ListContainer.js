@@ -4,6 +4,8 @@ import Top from './Top';
 import Middle from './Middle';
 import Bottom from './Bottom';
 
+import { PORT } from '../common';
+
 class ListContainer extends React.Component {
     constructor(props){
         super(props);
@@ -19,7 +21,7 @@ class ListContainer extends React.Component {
         let list_id = this.props.match.params.listId;
 
         fetch(
-            'http://localhost:3000/api/lists/' + list_id, 
+            'http://localhost:' + PORT + '/api/lists/' + list_id, 
             {
                 method: 'GET'
             }
@@ -35,7 +37,7 @@ class ListContainer extends React.Component {
                 )
                 //for each item id -> fetch the item
                 res.List.item_ids.forEach(item_id => {
-                    fetch('http://localhost:3000/api/items/' + item_id)
+                    fetch('http://localhost:' + PORT + '/api/items/' + item_id)
                     .then(res => res.json())
                     .then(
                         res => {
@@ -84,7 +86,7 @@ class ListContainer extends React.Component {
     // Remove an item
     delete_list_item = id => {
         // delete from lists db
-        fetch('http://localhost:3000/api/lists/' + this.props.match.params.listId,
+        fetch('http://localhost:' + PORT + '/api/lists/' + this.props.match.params.listId,
         {
             method: 'PUT',
             headers: {
@@ -97,7 +99,7 @@ class ListContainer extends React.Component {
         .then(
             res => {
                 // check if successful -> remove from items db
-                fetch('http://localhost:3000/api/items/' + id,
+                fetch('http://localhost:' + PORT + '/api/items/' + id,
                 {
                     method: 'DELETE'
                 }).then(res => res.json())
@@ -144,7 +146,7 @@ class ListContainer extends React.Component {
 
         if(newItemName.length !== 0){
             //add to items db
-            fetch('http://localhost:3000/api/items/',
+            fetch('http://localhost:' + PORT + '/api/items/',
             {
                 method: "POST",
                 headers: {
@@ -157,7 +159,7 @@ class ListContainer extends React.Component {
                 res => {
                     //check for success -> add to lists db
                     if(res.status === "New item created successfully!"){
-                        fetch('http://localhost:3000/api/lists/' + this.props.match.params.listId,
+                        fetch('http://localhost:' + PORT + '/api/lists/' + this.props.match.params.listId,
                         {
                             method: 'PUT',
                             headers: {
