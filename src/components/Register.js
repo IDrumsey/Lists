@@ -175,31 +175,26 @@ class Register extends React.Component {
         if(!foundErr){
             console.log("registering")
 
-            // hash and salt the password
-            Bcrypt.hash(password_val, 15, (err, hashed) => {
-                //create new user
-                fetch('http://localhost:' + PORT + '/api/users', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        firstName: first_name,
-                        lastName: last_name,
-                        email: email_val,
-                        password: hashed
-                    })
-                }).then(res => res.json())
-                .then(
-                    res => {
-                        console.log(res);
-                    }
-                )
+            //create new user
+            fetch('http://localhost:' + PORT + '/api/users', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    firstName: first_name,
+                    lastName: last_name,
+                    email: email_val,
+                    password: password_val
+                })
+            }).then(res => res.json())
+            .then(
+                res => {
+                    console.log(res);
 
-                //route to home page
-                
-
-            })
+                    //route to home page if good register
+                }
+            )
         }
     }
 
