@@ -1,5 +1,4 @@
 import React from 'react';
-import Bcrypt from 'bcryptjs';
 
 import Top from './Top';
 import Middle from './Middle';
@@ -192,7 +191,13 @@ class Register extends React.Component {
                 res => {
                     console.log(res);
 
+                    //if good -> save token in memory but for now just a cookie
+                    document.cookie = "accessToken=" + res.token;
+
                     //route to home page if good register
+                    if(res.auth === true){
+                        window.location.href = "/Home/" + res.user.id;
+                    }
                 }
             )
         }

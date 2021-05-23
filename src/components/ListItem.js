@@ -24,7 +24,7 @@ class ListItem extends React.Component {
         if(this.props.home){
             content = (
                     <div key={this.props.item.id} className="list-item">
-                        <a href={"/List/" + this.props.item.id}>
+                        <a href={"/List/" + this.props.item._id}>
                             <Text text={this.props.item.name}/>
                         </a>
                     <DeleteButton

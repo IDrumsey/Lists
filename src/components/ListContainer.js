@@ -29,6 +29,7 @@ class ListContainer extends React.Component {
         .then(res => res.json())
         .then(
             res => {
+                console.log()
                 //set list name
                 this.setState(
                     {

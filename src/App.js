@@ -20,7 +20,7 @@ function App(props) {
           <Route path="/Register" component={Register}/>
 
           {/* Home Page */}
-          <Route exact path="/Home" component={Home}/>
+          <Route path="/Home/:userId" component={Home}/>
 
           {/* Single List Page */}
           <Route path="/List/:listId" component={ListContainer}/>

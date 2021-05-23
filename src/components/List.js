@@ -61,7 +61,7 @@ class List extends React.Component {
                     <div style={this.wrapper_styles} className="list">
                         {
                             this.props.items.map(item => (
-                                <ListItem home key={item.id} item={item} deleteItemProps={this.props.deleteItemProps}/>
+                                <ListItem home key={item._id} item={item} deleteItemProps={this.props.deleteItemProps}/>
                             ))
                         }
                     </div>
@@ -76,7 +76,7 @@ class List extends React.Component {
                         />
                         {
                             this.props.items.map(item => (
-                                <ListItem home key={item.id} item={item} deleteItemProps={this.props.deleteItemProps}/>
+                                <ListItem home key={item._id} item={item} deleteItemProps={this.props.deleteItemProps}/>
                             ))
                         }
                     </div>

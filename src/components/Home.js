@@ -18,23 +18,45 @@ class Home extends React.Component {
     // Load data on mount
     componentDidMount() {
         //get all lists
-        fetch('http://localhost:' + PORT + '/api/lists', {
-            method: 'GET'
-        })
-        .then(res => res.json())
-        .then(res => {
-            //update state to have all lists
-            this.setState(
-                {
-                    items: res.List.map(list => {
-                        return {
-                            id: list._id,
-                            name: list.name
-                        }
-                    })
-                }
-            )
-        })
+        // fetch('http://localhost:' + PORT + '/api/lists', {
+        //     method: 'GET'
+        // })
+        // .then(res => res.json())
+        // .then(res => {
+        //     //update state to have all lists
+        //     this.setState(
+        //         {
+        //             items: res.List.map(list => {
+        //                 return {
+        //                     id: list._id,
+        //                     name: list.name
+        //                 }
+        //             })
+        //         }
+        //     )
+        // })
+
+        fetch('http://localhost:' + PORT + '/api/users/' + this.props.match.params.userId)
+            .then(res => res.json())
+            .then(res => {
+
+                //get all the lists' info
+                res.User.list_ids.forEach(list_id => {
+                    fetch('http://localhost:' + PORT + '/api/lists/' + list_id)
+                        .then(response => response.json())
+                        .then(
+                            response => {
+                                // update state with list
+                                this.setState({
+                                    items: [
+                                        ...this.state.items,
+                                        response.List
+                                    ]
+                                })
+                            }
+                        )
+                })
+            })
     }
 
     find_available_id = () => {
@@ -76,6 +98,18 @@ class Home extends React.Component {
                                 method: 'DELETE',
                             })
                         });
+
+                        //remove ref from user
+                        fetch('http://localhost:' + PORT + '/api/users/' + this.props.match.params.userId,
+                        {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                remove_list: id
+                            })
+                        }).then(res => res.json())
 
                         //remove the list
                         fetch('http://localhost:' + PORT + '/api/lists/' + id,
@@ -131,25 +165,36 @@ class Home extends React.Component {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    name: newItemName
+                    name: newItemName,
+                    user_id: this.props.match.params.userId
                 })
             }).then(res => res.json())
             .then(
                 res => {
                     // Add the item
-                    if(res.status === "success")
-                    this.setState(
+                    if(res.status === "success"){
+                        // Ref this list to the user
+                        fetch('http://localhost:' + PORT + '/api/users/' + this.props.match.params.userId,
                         {
-                            items: [
-                                {
-                                    id: res.list._id,
-                                    name: newItemName
-                                },
-                                ...this.state.items
-                            ],
-                            addNewItemTemplate: false
-                        }
-                    )
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                new_list: res.list._id
+                            })
+                        })
+
+                        this.setState(
+                            {
+                                items: [
+                                    res.list,
+                                    ...this.state.items
+                                ],
+                                addNewItemTemplate: false
+                            }
+                        )
+                    }
                 }
             )
         }

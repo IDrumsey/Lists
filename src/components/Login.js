@@ -4,10 +4,31 @@ import Top from './Top';
 import Middle from './Middle';
 import Bottom from './Bottom';
 
+import { PORT } from'../common';
+
 class Login extends React.Component {
 
     check_creds(){
-        console.log("checking creds")
+        console.log("logging in")
+        // authenticate in backend
+        fetch('http://localhost:' + PORT + '/api/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: document.getElementById('email-input').value,
+                password: document.getElementById('password-input').value
+            })
+        }).then(res => res.json())
+        .then(res => {
+            console.log(res)
+
+            //if good -> route to home page
+            if(res.auth === true){
+                //window.location.href = "/Home"
+            }
+        })
     }
 
 

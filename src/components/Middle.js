@@ -59,6 +59,7 @@ class Middle extends React.Component {
                 <div className="middle">
                     <Button mb="50px" size="50px" icon="plus" glow="#34eb77" centered clickHandler={this.props.showNewItemTemplateHandler}/>
                     <List
+                        key={this.props._id}
                         home
                         items={this.props.items}
                         w="80%"
