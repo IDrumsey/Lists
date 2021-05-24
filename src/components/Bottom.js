@@ -1,4 +1,5 @@
 import ButtonGroup from './ButtonGroup';
+import { getCookie } from '../common';
 
 function Bottom(props) {
     // Btns for the welcome page
@@ -43,7 +44,7 @@ function Bottom(props) {
                 icon: "home",
                 bgColor: "#fff",
                 glow: "#fff",
-                to: "/Home"
+                to: "/Home/" + getCookie("user_id").value
             }
         ]
     }

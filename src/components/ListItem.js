@@ -28,7 +28,7 @@ class ListItem extends React.Component {
                             <Text text={this.props.item.name}/>
                         </a>
                     <DeleteButton
-                        itemId={this.props.item.id}
+                        itemId={this.props.item._id}
                         size="30px" ml="auto" mr="5px"
                         icon="check" color="#75ffa5"
                         clickHandler={this.props.deleteItemProps}

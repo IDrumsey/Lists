@@ -4,12 +4,11 @@ import Top from './Top';
 import Middle from './Middle';
 import Bottom from './Bottom';
 
-import { PORT, decodeToken} from'../common';
+import { PORT, decodeToken } from'../common';
 
 class Login extends React.Component {
 
     check_creds(){
-        console.log("logging in")
         // authenticate in backend
         fetch('http://localhost:' + PORT + '/api/auth/login', {
             method: 'POST',
@@ -22,15 +21,16 @@ class Login extends React.Component {
             })
         }).then(res => res.json())
         .then(res => {
-            console.log(res)
-
             //if good -> route to home page
             if(res.auth === true){
-                // set the token cookie
-                document.cookie = "token=" + res.token;
-
                 // decode the token to get the user id
                 let userId = decodeToken(res.token).id;
+
+                // set the token cookie
+                document.cookie = "token=" + res.token;
+                //set user id cookie
+                document.cookie = "user_id=" + userId;
+
 
                 window.location.href = "/Home/" + userId;
             }

@@ -4,13 +4,13 @@ import Top from './Top';
 import Middle from './Middle';
 import Bottom from './Bottom';
 
-import { PORT } from '../common';
+import { PORT, getAccessToken, checkAuth } from '../common';
 
 class ListContainer extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            name: "Grocery List",
+            name: "",
             items: [],
             addNewItemTemplate: false
         }
@@ -23,39 +23,49 @@ class ListContainer extends React.Component {
         fetch(
             'http://localhost:' + PORT + '/api/lists/' + list_id, 
             {
-                method: 'GET'
+                method: 'GET',
+                headers: {
+                    authorization: "Bearer " + getAccessToken()
+                }
             }
         )
         .then(res => res.json())
         .then(
             res => {
-                console.log()
-                //set list name
-                this.setState(
-                    {
-                        name: res.List.name
-                    }
-                )
-                //for each item id -> fetch the item
-                res.List.item_ids.forEach(item_id => {
-                    fetch('http://localhost:' + PORT + '/api/items/' + item_id)
-                    .then(res => res.json())
-                    .then(
-                        res => {
-                            // update the state
-                            this.setState(
-                                {
-                                    items: this.state.items.concat(
+                if(checkAuth(res)){
+                    //set list name
+                    this.setState(
+                        {
+                            name: res.List.name
+                        }
+                    )
+                    //for each item id -> fetch the item
+                    res.List.item_ids.forEach(item_id => {
+                        fetch('http://localhost:' + PORT + '/api/items/' + item_id, {
+                            headers: {
+                                authorization: "Bearer " + getAccessToken()
+                            }
+                        })
+                        .then(res => res.json())
+                        .then(
+                            res => {
+                                if(checkAuth(res)){
+                                    // update the state
+                                    this.setState(
                                         {
-                                            id: res.Item._id,
-                                            name: res.Item.name
+                                            items: this.state.items.concat(
+                                                {
+                                                    id: res.Item._id,
+                                                    name: res.Item.name
+                                                }
+                                            )
                                         }
                                     )
                                 }
-                            )
-                        }
-                    )
-                })
+                            }
+                        )
+                    })
+                }
             }
         )
     }
@@ -91,7 +101,8 @@ class ListContainer extends React.Component {
         {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'authorization': "Bearer " + getAccessToken()
             },
             body: JSON.stringify({
                 remove_item: id
@@ -100,22 +111,29 @@ class ListContainer extends React.Component {
         .then(
             res => {
                 // check if successful -> remove from items db
-                fetch('http://localhost:' + PORT + '/api/items/' + id,
-                {
-                    method: 'DELETE'
-                }).then(res => res.json())
-                .then(
-                    res => {
-                        //check if successful -> update state
-                        this.setState({
-                            items: [
-                                ...this.state.items.filter(item => {
-                                    return item.id !== id;
-                                })
-                            ]
-                        });
-                    }
-                )
+                if(checkAuth(res)){
+                    fetch('http://localhost:' + PORT + '/api/items/' + id,
+                    {
+                        method: 'DELETE',
+                        headers: {
+                            'authorization': "Bearer " + getAccessToken()
+                        }
+                    }).then(res => res.json())
+                    .then(
+                        res => {
+                            //check if successful -> update state
+                            if(checkAuth(res)){
+                                this.setState({
+                                    items: [
+                                        ...this.state.items.filter(item => {
+                                            return item.id !== id;
+                                        })
+                                    ]
+                                });
+                            }
+                        }
+                    )
+                }
             }
         )
     }
@@ -151,7 +169,8 @@ class ListContainer extends React.Component {
             {
                 method: "POST",
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    "authorization": "Bearer " + getAccessToken()
                 },
                 body: JSON.stringify(data)
             })
@@ -159,29 +178,30 @@ class ListContainer extends React.Component {
             .then(
                 res => {
                     //check for success -> add to lists db
-                    if(res.status === "New item created successfully!"){
+                    if(checkAuth(res)){
                         fetch('http://localhost:' + PORT + '/api/lists/' + this.props.match.params.listId,
                         {
                             method: 'PUT',
                             headers: {
-                                'Content-Type': 'application/json'
+                                'Content-Type': 'application/json',
+                                "authorization": "Bearer " + getAccessToken()
                             },
                             body: JSON.stringify({
                                 new_item: res.item._id
                             })
                         })
-                        .then(res => res.json())
+                        .then(response => response.json())
                         .then(
-                            res => {
+                            response => {
                                 //check if successful -> update state
-                                if(res.status === 'list updated'){
+                                if(checkAuth(response)){
                                     //add to state
                                     this.setState(
                                         {
                                             items: [
                                                 //new item
                                                 {
-                                                    id: this.find_available_id(),
+                                                    id: res.item._id,
                                                     name: newItemName
                                                 },
                                                 ...this.state.items

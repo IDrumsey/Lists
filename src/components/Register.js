@@ -172,8 +172,6 @@ class Register extends React.Component {
             }
 
         if(!foundErr){
-            console.log("registering")
-
             //create new user
             fetch('http://localhost:' + PORT + '/api/users', {
                 method: 'POST',
@@ -189,12 +187,11 @@ class Register extends React.Component {
             }).then(res => res.json())
             .then(
                 res => {
-                    console.log(res);
-
                     //route to home page if good register
                     if(res.auth === true){
                         // set the token cookie
                         document.cookie = "token=" + res.token;
+                        document.cookie = "user_id=" + res.user.id;
 
                         window.location.href = "/Home/" + res.user.id;
                     }

@@ -4,7 +4,7 @@ import Top from './Top';
 import Middle from './Middle';
 import Bottom from './Bottom';
 
-import { PORT, getAccessToken } from '../common';
+import { PORT, getAccessToken, checkAuth, deleteCookie } from '../common';
 
 class Home extends React.Component {
     constructor(props){
@@ -44,26 +44,30 @@ class Home extends React.Component {
             .then(res => res.json())
             .then(res => {
                 // reroute if not authorized
-                if(res.status === "unauthorized"){
-                    window.location.href = '/Login';
-                }
-
-                //get all the lists' info
-                res.User.list_ids.forEach(list_id => {
-                    fetch('http://localhost:' + PORT + '/api/lists/' + list_id)
-                        .then(response => response.json())
-                        .then(
-                            response => {
-                                // update state with list
-                                this.setState({
-                                    items: [
-                                        ...this.state.items,
-                                        response.List
-                                    ]
-                                })
+                if(checkAuth(res)){
+                    //get all the lists' info
+                    res.User.list_ids.forEach(list_id => {
+                        fetch('http://localhost:' + PORT + '/api/lists/' + list_id, {
+                            headers: {
+                                authorization: "Bearer " + getAccessToken()
                             }
-                        )
-                })
+                        })
+                            .then(response => response.json())
+                            .then(
+                                response => {
+                                    if(checkAuth(response)){
+                                        // update state with list
+                                        this.setState({
+                                            items: [
+                                                ...this.state.items,
+                                                response.List
+                                            ]
+                                        })
+                                    }
+                                }
+                            )
+                    })
+                }
             })
     }
 
@@ -94,54 +98,64 @@ class Home extends React.Component {
     // Remove an item
     delete_list_item = id => {
         // remove all items -> get list items
-        fetch('http://localhost:' + PORT + '/api/lists/' + id)
+        fetch('http://localhost:' + PORT + '/api/lists/' + id, {
+            headers: {
+                authorization: "Bearer " + getAccessToken()
+            }
+        })
             .then(res => res.json())
             .then(
                 res => {
                     // reroute if not authorized
-                    if(res.status === "unauthorized"){
-                        window.location.href = '/Login';
-                    }
-                    if(res.List !== undefined){
-                        //remove all items
-                        res.List.item_ids.forEach(item_id => {
-                            fetch('http://localhost:' + PORT + '/api/items/' + item_id,
+                    if(checkAuth(res)){
+                        if(res.List !== undefined){
+                            //remove all items
+                            res.List.item_ids.forEach(item_id => {
+                                fetch('http://localhost:' + PORT + '/api/items/' + item_id,
+                                {
+                                    method: 'DELETE',
+                                    headers: {
+                                        authorization: "Bearer " + getAccessToken()
+                                    }
+                                })
+                            })
+    
+                            //remove ref from user
+                            fetch('http://localhost:' + PORT + '/api/users/' + this.props.match.params.userId,
+                            {
+                                method: 'PUT',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    authorization: "Bearer " + getAccessToken()
+                                },
+                                body: JSON.stringify({
+                                    remove_list: id
+                                })
+                            }).then(res => res.json())
+    
+                            //remove the list
+                            fetch('http://localhost:' + PORT + '/api/lists/' + id,
                             {
                                 method: 'DELETE',
-                            })
-                        });
-
-                        //remove ref from user
-                        fetch('http://localhost:' + PORT + '/api/users/' + this.props.match.params.userId,
-                        {
-                            method: 'PUT',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                remove_list: id
-                            })
-                        }).then(res => res.json())
-
-                        //remove the list
-                        fetch('http://localhost:' + PORT + '/api/lists/' + id,
-                        {
-                            method: 'DELETE'
-                        }).then(res => res.json())
-                        .then(
-                            res => {
-                                if(res.status === "success"){
-                                    //update state
-                                    this.setState({
-                                        items: [
-                                            ...this.state.items.filter(item => {
-                                                return item.id !== id;
-                                            })
-                                        ]
-                                    });
+                                headers: {
+                                    authorization: "Bearer " + getAccessToken()
+                                },
+                            }).then(res => res.json())
+                            .then(
+                                res => {
+                                    if(res.status === "success"){
+                                        //update state
+                                        this.setState({
+                                            items: [
+                                                ...this.state.items.filter(item => {
+                                                    return item._id !== id;
+                                                })
+                                            ]
+                                        });
+                                    }
                                 }
-                            }
-                        )
+                            )
+                        }
                     }
                 }
             )
@@ -185,33 +199,38 @@ class Home extends React.Component {
             .then(
                 res => {
                     // reroute if not authorized
-                    if(res.status === "unauthorized"){
-                        window.location.href = '/Login';
-                    }
-
-                    // Add the item
-                    if(res.status === "success"){
-                        // Ref this list to the user
-                        fetch('http://localhost:' + PORT + '/api/users/' + this.props.match.params.userId,
-                        {
-                            method: 'PUT',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                new_list: res.list._id
-                            })
-                        })
-
-                        this.setState(
+                    if(checkAuth(res)){
+                        // Add the item
+                        if(res.status === "success"){
+                            // Ref this list to the user
+                            fetch('http://localhost:' + PORT + '/api/users/' + this.props.match.params.userId,
                             {
-                                items: [
-                                    res.list,
-                                    ...this.state.items
-                                ],
-                                addNewItemTemplate: false
-                            }
-                        )
+                                method: 'PUT',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    authorization: "Bearer " + getAccessToken()
+                                },
+                                body: JSON.stringify({
+                                    new_list: res.list._id
+                                })
+                            }).then(response => response.json())
+                            .then(
+                                response => {
+                                    //check if authorized
+                                    if(checkAuth(response)){
+                                        this.setState(
+                                            {
+                                                items: [
+                                                    res.list,
+                                                    ...this.state.items
+                                                ],
+                                                addNewItemTemplate: false
+                                            }
+                                        )
+                                    }
+                                }
+                            )
+                        }
                     }
                 }
             )
@@ -220,10 +239,12 @@ class Home extends React.Component {
 
     // logout
     logout() {
-        console.log("logging out");
-
         // remove the access token
-        console.log(document.cookie)
+        deleteCookie("token");
+        deleteCookie("user_id");
+
+        //route to login
+        window.location.href = "/Login";
     }
 
     render() {

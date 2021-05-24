@@ -31,7 +31,49 @@ export function decodeToken (token) {
 };
 
 export function getAccessToken(){
-    return document.cookie.split('=')[1];
+    // get raw string
+    let cookie = getCookie("token");
+
+    if(cookie === undefined){
+        return "random"
+    }
+
+    return cookie.value;
+}
+
+export function checkAuth(res){
+    if(res.auth === undefined){
+        return true;
+    }
+    if(!res.auth) {
+        window.location.href = "/Login";
+    }
+    else{
+        return true;
+    }
+}
+
+export function getCookie(name){
+    let fields = document.cookie.split(';');
+
+    fields = fields.map(field => {
+        field = field.trim();
+        let temp = field.split('=');
+        return {
+            key: temp[0],
+            value: temp[1]
+        }
+    })
+
+    let cookie = fields.find(field => field.key === name);
+
+    return cookie;
+}
+
+export function deleteCookie(name){
+    // https://stackoverflow.com/questions/10593013/delete-cookie-by-name
+    
+    document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
 
 export let PORT = 8000;
