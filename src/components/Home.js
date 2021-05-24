@@ -4,7 +4,7 @@ import Top from './Top';
 import Middle from './Middle';
 import Bottom from './Bottom';
 
-import { PORT } from '../common';
+import { PORT, getAccessToken } from '../common';
 
 class Home extends React.Component {
     constructor(props){
@@ -36,9 +36,17 @@ class Home extends React.Component {
         //     )
         // })
 
-        fetch('http://localhost:' + PORT + '/api/users/' + this.props.match.params.userId)
+        fetch('http://localhost:' + PORT + '/api/users/' + this.props.match.params.userId, {
+            headers: {
+                authorization: "Bearer " + getAccessToken()
+            }
+        })
             .then(res => res.json())
             .then(res => {
+                // reroute if not authorized
+                if(res.status === "unauthorized"){
+                    window.location.href = '/Login';
+                }
 
                 //get all the lists' info
                 res.User.list_ids.forEach(list_id => {
@@ -90,6 +98,10 @@ class Home extends React.Component {
             .then(res => res.json())
             .then(
                 res => {
+                    // reroute if not authorized
+                    if(res.status === "unauthorized"){
+                        window.location.href = '/Login';
+                    }
                     if(res.List !== undefined){
                         //remove all items
                         res.List.item_ids.forEach(item_id => {
@@ -162,7 +174,8 @@ class Home extends React.Component {
             {
                 method: 'POST',
                 headers:{
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    authorization: "Bearer " + getAccessToken()
                 },
                 body: JSON.stringify({
                     name: newItemName,
@@ -171,6 +184,11 @@ class Home extends React.Component {
             }).then(res => res.json())
             .then(
                 res => {
+                    // reroute if not authorized
+                    if(res.status === "unauthorized"){
+                        window.location.href = '/Login';
+                    }
+
                     // Add the item
                     if(res.status === "success"){
                         // Ref this list to the user
@@ -200,6 +218,14 @@ class Home extends React.Component {
         }
     }
 
+    // logout
+    logout() {
+        console.log("logging out");
+
+        // remove the access token
+        console.log(document.cookie)
+    }
+
     render() {
         return (
             <div id="container">
@@ -213,7 +239,10 @@ class Home extends React.Component {
                     showNewItemTemplateHandler = {this.show_new_item_template}
                     removeNewItemTemplateHandler = {this.remove_new_item_template}
                 />
-                <Bottom home/>
+                <Bottom
+                    home
+                    logoutHandler={this.logout}
+                />
             </div>
         )
     }

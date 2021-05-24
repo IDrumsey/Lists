@@ -191,11 +191,11 @@ class Register extends React.Component {
                 res => {
                     console.log(res);
 
-                    //if good -> save token in memory but for now just a cookie
-                    document.cookie = "accessToken=" + res.token;
-
                     //route to home page if good register
                     if(res.auth === true){
+                        // set the token cookie
+                        document.cookie = "token=" + res.token;
+
                         window.location.href = "/Home/" + res.user.id;
                     }
                 }

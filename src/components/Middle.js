@@ -77,7 +77,7 @@ class Middle extends React.Component {
             this.content = (
                 <div className="middle">
                     <input className="login-input" id="email-input" type="text" name="email" placeholder="Email"/>
-                    <input className="login-input" id="password-input" type="text" name="password" placeholder="Password"/>
+                    <input className="login-input" id="password-input" type="password" name="password" placeholder="Password"/>
                 </div>
             )
         }

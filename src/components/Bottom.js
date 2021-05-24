@@ -56,7 +56,8 @@ function Bottom(props) {
                 icon: "sign-out",
                 bgColor: "#fff",
                 glow: "#fff",
-                to: "/Login"
+                //to: "/Login",
+                clickEvent: props.logoutHandler
             }
         ]
     }

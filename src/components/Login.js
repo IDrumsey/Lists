@@ -4,7 +4,7 @@ import Top from './Top';
 import Middle from './Middle';
 import Bottom from './Bottom';
 
-import { PORT } from'../common';
+import { PORT, decodeToken} from'../common';
 
 class Login extends React.Component {
 
@@ -26,7 +26,13 @@ class Login extends React.Component {
 
             //if good -> route to home page
             if(res.auth === true){
-                //window.location.href = "/Home"
+                // set the token cookie
+                document.cookie = "token=" + res.token;
+
+                // decode the token to get the user id
+                let userId = decodeToken(res.token).id;
+
+                window.location.href = "/Home/" + userId;
             }
         })
     }
