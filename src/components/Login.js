@@ -7,8 +7,15 @@ import Bottom from './Bottom';
 import { PORT, decodeToken } from'../common';
 
 class Login extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            error: false,
+        }
+    }
 
-    check_creds(){
+    check_creds = () => {
+
         // authenticate in backend
         fetch('http://localhost:' + PORT + '/api/auth/login', {
             method: 'POST',
@@ -21,6 +28,11 @@ class Login extends React.Component {
             })
         }).then(res => res.json())
         .then(res => {
+            //stop loader
+            this.setState({
+                showLoader: false
+            })
+
             //if good -> route to home page
             if(res.auth === true){
                 // decode the token to get the user id
@@ -34,6 +46,12 @@ class Login extends React.Component {
 
                 window.location.href = "/Home/" + userId;
             }
+            else{
+                // show error
+                this.setState({
+                    error: true
+                })
+            }
         })
     }
 
@@ -42,7 +60,7 @@ class Login extends React.Component {
         return (
             <div id="container">
                 <Top title="Login"/>
-                <Middle login/>
+                <Middle login error={this.state.error}/>
                 <Bottom login signInHandler={this.check_creds}/>
             </div>
         )

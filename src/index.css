@@ -24,9 +24,13 @@ a {
 .text {
   margin: 0;
   color: #fff;
-  font-size: 25px;
   width: 100%;
   font-family: "Rockwell";
+  font-size: 25px;
+}
+
+.list-item-text {
+  font-size: 20px;
 }
 
 .text-centered-x {
@@ -104,15 +108,78 @@ input:focus {
   outline: none;
 }
 
+#container {
+  display: grid;
+  grid-template-rows: 15% 70% 15%;
+}
+
+.btn-group {
+  display: flex;
+}
+
+.spinner {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+}
+
+.spinning {
+  animation: spin 200ms ease-in-out;
+}
+
+@keyframes spin {
+  from {
+    rotate: 0;
+  }
+
+  to {
+    rotate: 360deg;
+  }
+}
+
 /* Mobile */
 
 /* ======================================================================================================== */
 
 @media only screen and (max-width: 450px) {
-  #container {
-    display: grid;
-    grid-template-rows: 15% 70% 15%;
-  }
 }
 
+/* ======================================================================================================== */
+
+/* Tablet */
+
+/* ======================================================================================================== */
+
+@media only screen and (min-width: 450px) {
+  /* .text {
+    font-size: 100px;
+  }
+
+  .btn {
+    width: 150px !important;
+    height: 150px !important;
+  }
+
+  .btn-icon {
+    font-size: 80px !important;
+  }
+
+  .login-input {
+    height: 100px;
+    font-size: 50px;
+  } */
+
+  .new-list-item {
+    grid-template-columns: 85% 15% !important;
+  }
+
+  #welcome-image {
+    width: 40%;
+    height: auto;
+    margin: auto;
+    display: block;
+  }
+}
 /* ======================================================================================================== */

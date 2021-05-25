@@ -25,7 +25,7 @@ class NewListItem extends React.Component {
         return (
             <div className="new-list-item list-item" style={this.wrapper_styles}>
                 <input id="new-item-name" type="text" style={this.input_styles}></input>
-                <div style={this.btn_group_styles}>
+                <div className="new-item-options" style={this.btn_group_styles}>
                     <Button
                         size="30px"
                         ml="auto"
